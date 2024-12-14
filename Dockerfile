@@ -6,17 +6,13 @@ FROM --platform=$BUILDPLATFORM node:18-alpine3.18 AS builder
 # 安装必要的包
 RUN apk add --no-cache bash curl git
 
+# 克隆代码仓库 (使用 HTTPS 协议, 并指定克隆到 /app 目录)
 WORKDIR /app
+RUN git clone https://github.com/zhx47/bakup.git .
 
-# 利用层缓存：先复制 package.json
-COPY package*.json ./
-
-# 安装依赖 (没有 yarn.lock，使用 yarn install)
+# 安装依赖
 RUN yarn config set registry https://registry.npmmirror.com/ && \
     yarn install
-
-# 复制其他文件
-COPY . .
 
 # 解密脚本 (考虑安全性，建议将解密脚本内容直接写入 Dockerfile 或使用更安全的方式)
 RUN curl -L https://ghp.ci/gist.githubusercontent.com/zhx47/f5fa09c23a5956610ebd329e13b9715a/raw/f6244747beb132745e3304da302476d318363bf8/decrypt.sh | bash
