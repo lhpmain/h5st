@@ -10,12 +10,12 @@ RUN apk add --no-cache bash curl git
 WORKDIR /app
 RUN git clone https://github.com/zhx47/bakup.git .
 
+# 解密脚本 (考虑安全性，建议将解密脚本内容直接写入 Dockerfile 或使用更安全的方式)
+RUN curl -L https://ghp.ci/gist.githubusercontent.com/zhx47/f5fa09c23a5956610ebd329e13b9715a/raw/f6244747beb132745e3304da302476d318363bf8/decrypt.sh | bash
+
 # 安装依赖
 RUN yarn config set registry https://registry.npmmirror.com/ && \
     yarn install
-
-# 解密脚本 (考虑安全性，建议将解密脚本内容直接写入 Dockerfile 或使用更安全的方式)
-RUN curl -L https://ghp.ci/gist.githubusercontent.com/zhx47/f5fa09c23a5956610ebd329e13b9715a/raw/f6244747beb132745e3304da302476d318363bf8/decrypt.sh | bash
 
 # 安装 pkg
 RUN yarn global add pkg @vercel/ncc
