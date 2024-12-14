@@ -33,9 +33,9 @@ jobs:
           file: ./Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: 
-            - ${{ secrets.DOCKER_USERNAME }}/h5st:${{ github.sha }}
-            - ${{ secrets.DOCKER_USERNAME }}/h5st:latest
+          tags: | 
+            ${{ secrets.DOCKER_USERNAME }}/h5st:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/h5st:latest
       - name: Image digest
         run: echo ${{ steps.build-and-push.outputs.digest }}
       - name: Delete workflow runs
