@@ -26,7 +26,7 @@
         container_name: h5st
         image: dswang2233/h5st
         ports:
-        - 8080:3001
+            - 8080:3001
         restart: on-failure:5
         network_mode: bridge
     ```
