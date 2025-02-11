@@ -23,11 +23,10 @@ jobs:
       - name: Get upstream commit ID
         id: get-upstream-commit
         run: echo "::set-output name=commit_id::$(git rev-parse upstream/${{ github.event.inputs.upstream_branch || 'master' }})"
-      - name: Get last known commit ID
-        id: get-last-commit
-        run: |
-          LAST_COMMIT_ID=$(git show-ref --heads --quiet refs/heads/last_upstream_commit || echo "")
-          echo "::set-output name=last_commit_id::${LAST_COMMIT_ID}"
+      - name: Get upstream commit ID
+        id: get-upstream-commit
+        run: echo "::set-output name=commit_id::$(git rev-parse upstream)"
+
       - name: Dispatch event if updates are found
         id: dispatch-event
         if: steps.get-upstream-commit.outputs.commit_id != steps.get-last-commit.outputs.last_commit_id
