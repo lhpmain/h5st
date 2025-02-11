@@ -1,0 +1,36 @@
+name: Check Upstream Repository
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs every hour
+jobs:
+  check_upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up git config
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Fetch upstream
+        run: git fetch --depth 1 ${{ secrets.UPSTREAM_REPO_URL }} main:upstream
+      - name: Get upstream commit ID
+        id: get-upstream-commit
+        run: echo "::set-output name=commit_id::$(git rev-parse upstream/main)"
+      - name: Get last known commit ID
+        id: get-last-commit
+        run: |
+          LAST_COMMIT_ID=$(git show-ref --heads --quiet refs/heads/last_upstream_commit || echo "")
+          echo "::set-output name=last_commit_id::${LAST_COMMIT_ID}"
+      - name: Dispatch event if updates are found
+        id: dispatch-event
+        if: steps.get-upstream-commit.outputs.commit_id != steps.get-last-commit.outputs.last_commit_id
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: upstream_repository_updated
+      - name: Update last known commit ID
+        if: steps.dispatch-event.outcome == 'success'
+        run: |
+          git branch -f last_upstream_commit ${{ steps.get-upstream-commit.outputs.commit_id }}
+          git push -f origin last_upstream_commit

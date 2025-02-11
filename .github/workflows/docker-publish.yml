@@ -7,6 +7,7 @@ on:
     branches:
       - main
   repository_dispatch:
+    types: [upstream_repository_updated]
   workflow_dispatch:
 jobs:
   build:
