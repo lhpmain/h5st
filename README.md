@@ -10,8 +10,6 @@
     docker pull dswang2233/h5st:latest
     ```
 
-    将 `dswang2233` 替换为你的 Docker Hub 用户名。
-
 2.  **运行容器：**
 
     ```bash
@@ -24,22 +22,23 @@
     services:
     h5st:
         container_name: h5st
-        image: dswang2233/h5st
+        image: dswang2233/h5st:latest
         ports:
-            - 8080:3001
+            - 3001:3001
         restart: on-failure:5
         network_mode: bridge
     ```
 
     此命令将在后台运行容器 (`-d`)，并将主机上的端口 8080 映射到容器内的端口 3001。根据需要调整端口映射。
+    支持Amd64和arm64架构
 
 3.  **使用：**
 
-    在你需要的地方填写 `http://localhost:8080` 或 `http://127.0.0.1:8080/h5st`（或者你更改端口映射后的相应端口）。
+    在你需要的地方填写 `http://localhost:3001` 或 `http://127.0.0.1:3001/h5st`（或者你更改端口映射后的相应端口）。
 
 ## 自动构建
 
-当上游仓库有更新时，Docker 镜像将自动构建并发布到 Docker Hub。`check-upstream.yml` 工作流会定期检查更新并触发构建过程。
+当上游仓库有更新时，Docker 镜像将自动构建并发布到 Docker Hub。
 
 ## 鸣谢
 
