@@ -1,5 +1,11 @@
 name: Check Upstream Repository
 on:
+  workflow_dispatch:
+    inputs:
+      upstream_branch:
+        description: 'Upstream repository branch name'
+        required: false
+        default: main
   schedule:
     - cron: '0 * * * *' # Runs every hour
 jobs:
@@ -13,10 +19,10 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Fetch upstream
-        run: git fetch --depth 1 ${{ secrets.UPSTREAM_REPO_URL }} main:upstream
+        run: git fetch --depth 1 ${{ secrets.UPSTREAM_REPO_URL }} ${{ github.event.inputs.upstream_branch || 'master' }}:upstream
       - name: Get upstream commit ID
         id: get-upstream-commit
-        run: echo "::set-output name=commit_id::$(git rev-parse upstream/main)"
+        run: echo "::set-output name=commit_id::$(git rev-parse upstream/${{ github.event.inputs.upstream_branch || 'master' }})"
       - name: Get last known commit ID
         id: get-last-commit
         run: |
