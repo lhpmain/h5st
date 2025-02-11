@@ -22,9 +22,6 @@ jobs:
         run: git fetch --depth 1 ${{ secrets.UPSTREAM_REPO_URL }} ${{ github.event.inputs.upstream_branch || 'master' }}:upstream
       - name: Get upstream commit ID
         id: get-upstream-commit
-        run: echo "::set-output name=commit_id::$(git rev-parse upstream/${{ github.event.inputs.upstream_branch || 'master' }})"
-      - name: Get upstream commit ID
-        id: get-upstream-commit
         run: echo "::set-output name=commit_id::$(git rev-parse upstream)"
 
       - name: Dispatch event if updates are found
