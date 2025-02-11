@@ -34,8 +34,8 @@ jobs:
       - name: Update last known commit ID
         if: steps.dispatch-event.outcome == 'success'
         run: |
-          git branch -f last_upstream_commit ${{ steps.get-upstream-commit.outputs.commit_id }}
-          git push -f origin last_upstream_commit
+          git tag -f last_upstream_commit ${{ steps.get-upstream-commit.outputs.commit_id }}
+          git push --force-with-lease origin last_upstream_commit
 
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2
