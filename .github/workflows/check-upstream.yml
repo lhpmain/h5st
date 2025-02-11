@@ -22,27 +22,39 @@ jobs:
         run: git fetch --depth 1 ${{ secrets.UPSTREAM_REPO_URL }} ${{ github.event.inputs.upstream_branch || 'master' }}:upstream
       - name: Get upstream commit ID
         id: get-upstream-commit
-        run: echo "::set-output name=commit_id::$(git rev-parse upstream)"
+        run: echo "commit_id=$(git rev-parse upstream)" >> $GITHUB_OUTPUT
+
+      - name: Restore last upstream commit ID from cache
+        id: cache-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: last_upstream_commit.txt
+          key: last-upstream-commit-${{ github.run_id }} # Use run_id for per-run isolation
+          restore-keys: |
+            last-upstream-commit-
+
+      - name: Get last known commit id
+        id: get-last-commit
+        run: echo "last_commit_id=$(cat last_upstream_commit.txt || echo '')" >> $GITHUB_OUTPUT
 
       - name: Dispatch event if updates are found
-        id: dispatch-event
         if: steps.get-upstream-commit.outputs.commit_id != steps.get-last-commit.outputs.last_commit_id
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           event-type: upstream_repository_updated
-      - name: Get last known commit ID
-        id: get-last-commit
-        run: |
-          LAST_COMMIT_ID=$(git rev-parse origin/last_upstream_commit || echo "")
-          echo "::set-output name=last_commit_id::${LAST_COMMIT_ID}"
-    
-      - name: Update last known commit ID
-        if: steps.dispatch-event.outcome == 'success'
-        run: |
-          git branch -f last_upstream_commit ${{ steps.get-upstream-commit.outputs.commit_id }}
-          git push -f origin last_upstream_commit
 
+      - name: Save current upstream commit id
+        if: steps.get-upstream-commit.outputs.commit_id != steps.get-last-commit.outputs.last_commit_id
+        run: echo ${{steps.get-upstream-commit.outputs.commit_id}} > last_upstream_commit.txt
+
+      - name: Save last upstream commit ID to cache
+        id: cache-save
+        if: steps.get-upstream-commit.outputs.commit_id != steps.get-last-commit.outputs.last_commit_id
+        uses: actions/cache/save@v3
+        with:
+          path: last_upstream_commit.txt
+          key: last-upstream-commit-${{ github.run_id }}
 
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2
