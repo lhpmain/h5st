@@ -31,19 +31,19 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           event-type: upstream_repository_updated
-
-      - name: Update last known commit ID
-        if: steps.dispatch-event.outcome == 'success'
-        run: |
-          git branch -f last_upstream_commit ${{ steps.get-upstream-commit.outputs.commit_id }}
-          git push -f origin last_upstream_commit
-
       - name: Get last known commit ID
         id: get-last-commit
         run: |
           LAST_COMMIT_ID=$(git rev-parse origin/last_upstream_commit || echo "")
           echo "::set-output name=last_commit_id::${LAST_COMMIT_ID}"
     
+      - name: Update last known commit ID
+        if: steps.dispatch-event.outcome == 'success'
+        run: |
+          git branch -f last_upstream_commit ${{ steps.get-upstream-commit.outputs.commit_id }}
+          git push -f origin last_upstream_commit
+
+
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2
         with:
