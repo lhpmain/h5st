@@ -5,7 +5,7 @@ on:
       upstream_branch:
         description: 'Upstream repository branch name'
         required: false
-        default: main
+        default: master
   schedule:
     - cron: '0 * * * *' # Runs every hour
 jobs:
