@@ -1,11 +1,11 @@
 name: Build and Publish Multi-Architecture Docker Image
 on:
-  push:
-    branches:
-      - main    # 在推送到主分支时触发
-  pull_request:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main    # 在推送到主分支时触发
+  # pull_request:
+  #   branches:
+  #     - main
   repository_dispatch:
     types: [upstream_repository_updated]
   workflow_dispatch:
