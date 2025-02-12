@@ -58,8 +58,15 @@ jobs:
 
       - name: Delete expired cache
         if: steps.get-upstream-commit.outputs.commit_id != steps.get-last-commit.outputs.last_commit_id
-        uses: actions/cache/delete-expired-cache@v3
+        uses: actions/github-script@v6
         with:
+          script: |
+            const { data: { id: cacheId } } = await github.rest.actions.getActionsCacheUsage();
+            if (cacheId) {
+              await github.rest.actions.deleteActionsCacheById({
+                cache_id: cacheId
+              });
+            }
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Delete workflow runs
