@@ -56,19 +56,6 @@ jobs:
           path: last_upstream_commit.txt
           key: last-upstream-commit-${{ github.run_id }}
 
-      - name: Delete expired cache
-        if: steps.get-upstream-commit.outputs.commit_id != steps.get-last-commit.outputs.last_commit_id
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { data: { id: cacheId } } = await github.rest.actions.getActionsCacheUsage();
-            if (cacheId) {
-              await github.rest.actions.deleteActionsCacheById({
-                cache_id: cacheId
-              });
-            }
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2
         with:
