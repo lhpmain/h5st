@@ -7,13 +7,13 @@
 1.  **拉取镜像：**
 
     ```bash
-    docker pull dswang2233/h5st:latest
+    docker pull lhpmain/h5st:latest
     ```
 
 2.  **运行容器：**
 
     ```bash
-    docker run -d -p 8080:3001 dswang2233/h5st:latest
+    docker run -d -p 8080:3001 lhpmain/h5st:latest
     ```
 
     或使用Docker-Compose方式
@@ -22,7 +22,7 @@
     services:
     h5st:
         container_name: h5st
-        image: dswang2233/h5st:latest
+        image: lhpmain/h5st:latest
         ports:
             - 3001:3001
         restart: on-failure:5
